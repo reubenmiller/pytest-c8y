@@ -8,7 +8,6 @@ package_data = {"": ["*"]}
 install_requires = [
     "c8y-api>=1.3,<2.0",
     "jwt>=1.3.1,<2.0.0",
-    "poetry2setup>=1.0.0,<2.0.0",
     "pytest-base-url>=2.0.0,<3.0.0",
     "pytest-html>=3.1.1,<4.0.0",
     "pytest-variables>=2.0.0,<3.0.0",
