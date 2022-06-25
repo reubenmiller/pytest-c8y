@@ -8,7 +8,8 @@ class DeviceConfiguration(AssertDevice):
         This should trigger the device/agent to download the configuration from the provided url
         """
         fragments = {
-            "c8y_DownloadConfigFile": configuration.__dict__**kwargs,
+            "c8y_DownloadConfigFile": configuration.__dict__,
+            **kwargs,
         }
         return self._execute(**fragments)
 
@@ -17,6 +18,7 @@ class DeviceConfiguration(AssertDevice):
         This should trigger the device/agent to uploaded the configuration type to the platform
         """
         fragments = {
-            "c8y_UploadConfigFile": configuration.__dict__**kwargs,
+            "c8y_UploadConfigFile": configuration.__dict__,
+            **kwargs,
         }
         return self._execute(**fragments)
