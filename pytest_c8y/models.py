@@ -13,7 +13,9 @@ class Firmware:
     url: str = ""
 
     def __eq__(self, obj: object) -> bool:
-        return compare_dataclass(obj, self)
+        if isinstance(obj, Firmware):
+            return compare_dataclass(self, obj)
+        return compare_dataclass(self, Firmware(**obj))
 
 
 @dataclasses.dataclass
@@ -26,7 +28,9 @@ class Software:
     action: str = ""
 
     def __eq__(self, obj: object) -> bool:
-        return compare_dataclass(obj, self)
+        if isinstance(obj, Software):
+            return compare_dataclass(self, obj)
+        return compare_dataclass(self, Software(**obj))
 
 
 @dataclasses.dataclass

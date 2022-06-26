@@ -19,10 +19,9 @@ def test_software_management_install(device_mgmt: DeviceManagement):
     )
 
     with pytest.raises(AssertionError):
-        device_mgmt.software_management.assert_software_installed(
+        device_mgmt.software_management.assert_not_software_installed(
             Software(name="test01", version="1.0.0"),
             mo=mo,
-            invert=True,
         )
 
     with pytest.raises(AssertionError):

@@ -2,16 +2,17 @@
 """
 import logging
 import os
+import time
 
 import pytest
 from c8y_api._main_api import CumulocityApi
 from c8y_api._util import c8y_keys
-from c8y_api.model import Device
+from c8y_api.model import Device, Operation
 from dotenv import load_dotenv
 
 from pytest_c8y.c8y import CustomCumulocityApp
 from pytest_c8y.device_management import DeviceManagement, create_context_from_identity
-
+from pytest_c8y.task import BackgroundTask
 from pytest_c8y.utils import RandomNameGenerator
 
 LOGGER = logging.getLogger(__name__)
@@ -82,8 +83,8 @@ def factory(logger, live_c8y: CumulocityApi):
 
 
 # @pytest.fixture(scope='session')
-@pytest.fixture()
-def sample_device(logger: logging.Logger, live_c8y: CumulocityApi) -> Device:
+@pytest.fixture(name="sample_device")
+def sample_device_fixture(logger: logging.Logger, live_c8y: CumulocityApi) -> Device:
     """Provide an sample device, just for testing purposes."""
 
     typename = RandomNameGenerator.random_name()
@@ -118,3 +119,30 @@ class PyTestCumulocityPlugin:
 def device_mgmt(live_c8y) -> DeviceManagement:
     """Provide a live CumulocityApi instance as defined by the environment."""
     return create_context_from_identity(live_c8y)
+
+
+@pytest.fixture(scope="function")
+def background_task(live_c8y: CumulocityApi):
+    """Background task used for creating items on regular timers"""
+    task = BackgroundTask(live_c8y)
+    yield task
+    task.stop()
+
+
+@pytest.fixture(scope="function")
+def background_agent(live_c8y: CumulocityApi, sample_device: Device):
+    """Background agent to transition any PENDING operation to EXECUTING -> SUCCESSFUL"""
+    task = BackgroundTask(live_c8y)
+
+    def handle_operation():
+        """Transition operations"""
+        for operation in live_c8y.operations.select(
+            agent_id=sample_device.id, status=Operation.Status.PENDING
+        ):
+            operation["status"] = operation.Status.EXECUTING
+            time.sleep(2)
+            operation["status"] = operation.Status.SUCCESSFUL
+
+    task.start(handle_operation, interval=5)
+    yield task
+    task.stop()

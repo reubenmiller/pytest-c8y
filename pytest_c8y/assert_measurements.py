@@ -37,7 +37,7 @@ class AssertMeasurements(AssertDevice):
         got = sorted(self._get_supported_series())
         assert got == wanted, f"wanted={wanted}, got={got}"
 
-    def assert_measurement_count(
+    def assert_count(
         self,
         _exp_min_count: int = 1,
         _exp_max_count: int = None,

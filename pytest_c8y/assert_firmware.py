@@ -4,6 +4,7 @@ from c8y_api.model import ManagedObject
 
 from pytest_c8y.assert_device import AssertDevice
 from pytest_c8y.assert_operation import AssertOperation
+from pytest_c8y.compare import compare_dataclass
 from pytest_c8y.models import Firmware
 
 
@@ -26,7 +27,7 @@ class FirmwareManagement(AssertDevice):
         if mo is None:
             mo = self.context.client.inventory.get(self.context.device_id)
 
-        assert mo.to_json()["c8y_Firmware"] == expected_firmware, (
+        assert compare_dataclass(mo.to_json()["c8y_Firmware"], expected_firmware), (
             f"Firmware does not match. "
             f"wanted={expected_firmware}, got={mo.to_json()['c8y_Firmware']}"
         )
@@ -39,7 +40,7 @@ class FirmwareManagement(AssertDevice):
         if mo is None:
             mo = self.context.client.inventory.get(self.context.device_id)
 
-        assert (
-            mo.to_json()["c8y_Firmware"] != expected_firmware
+        assert not compare_dataclass(
+            mo.to_json()["c8y_Firmware"], expected_firmware
         ), f"Firmware is installed. wanted=not_installed, got={expected_firmware}"
         return mo

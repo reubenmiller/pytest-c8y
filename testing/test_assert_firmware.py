@@ -9,7 +9,7 @@ def test_assert_firmware(device_mgmt: DeviceManagement):
     """Test firmware assertions"""
     mo = ManagedObject(c8y_Firmware=Firmware(name="linux-A", version="1.0.0").__dict__)
     device_mgmt.firmware_management.assert_firmware(
-        Firmware(name="linux-.+"),
+        Firmware(name="linux-.+", version=".+"),
         mo=mo,
     )
 

@@ -39,6 +39,11 @@ class DeviceManagement(AssertDevice):
         self.measurements = AssertMeasurements(context)
         self.software_management = SoftwareManagement(context)
 
+    @property
+    def c8y(self) -> CumulocityApi:
+        """Shortcut to context.client"""
+        return self.context.client
+
     def configure_retries(self, **kwargs):
         """Configure retries for all assertions"""
         # apply retry mechanism
@@ -61,7 +66,7 @@ class DeviceManagement(AssertDevice):
         }
         return self._execute(**fragments)
 
-    def create_operation(self, **kwargs):
+    def create_operation(self, **kwargs) -> AssertOperation:
         """Create an operation"""
         fragments = {
             "description": "Send operation",

@@ -21,10 +21,12 @@ def compare_dataclass(obj1: object, obj2: object) -> bool:
     obj2_dict = obj2.__dict__ if not hasattr(obj2, "items") else obj2
 
     for key, value in obj2_dict.items():
+        if not value:
+            continue
+
         if key not in obj1_dict:
             return False
 
-        if value:
-            if not re.match(value, obj1_dict[key]):
-                return False
+        if not re.match(value, obj1_dict.get(key, "")):
+            return False
     return True
