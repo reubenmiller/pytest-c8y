@@ -1,9 +1,15 @@
+"""Device configuration assertions"""
 from pytest_c8y.assert_device import AssertDevice
 from pytest_c8y.models import Configuration
+from pytest_c8y.assert_operation import AssertOperation
 
 
 class DeviceConfiguration(AssertDevice):
-    def set_configuration(self, configuration: Configuration, **kwargs):
+    """Device configuration assertions"""
+
+    def set_configuration(
+        self, configuration: Configuration, **kwargs
+    ) -> AssertOperation:
         """Create a configuration operation c8y_DownloadConfigFile
         This should trigger the device/agent to download the configuration from the provided url
         """
@@ -13,8 +19,12 @@ class DeviceConfiguration(AssertDevice):
         }
         return self._execute(**fragments)
 
-    def get_configuration(self, configuration: Configuration, **kwargs):
-        """Create a configuration operation (c8y_UploadConfigFile) to get the configuration from a device.
+    def get_configuration(
+        self, configuration: Configuration, **kwargs
+    ) -> AssertOperation:
+        """Create a configuration operation (c8y_UploadConfigFile) to get the configuration
+        from a device.
+
         This should trigger the device/agent to uploaded the configuration type to the platform
         """
         fragments = {

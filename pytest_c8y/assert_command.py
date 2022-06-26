@@ -4,6 +4,9 @@ from pytest_c8y.assert_operation import AssertOperation
 
 
 class Command(AssertDevice):
+    """Command assertions"""
+
+    # pylint: disable=too-few-public-methods
     def execute(self, text: str, **kwargs) -> AssertOperation:
         """Execute a shell command via an operation"""
         fragments = {

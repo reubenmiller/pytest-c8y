@@ -1,6 +1,7 @@
-import requests
-from pytest_c8y.assert_device import AssertDevice
+"""Identity assertions"""
 from c8y_api.model import ManagedObject
+
+from pytest_c8y.assert_device import AssertDevice
 
 
 class DeviceNotFound(AssertionError):
@@ -8,17 +9,21 @@ class DeviceNotFound(AssertionError):
 
 
 class AssertIdentity(AssertDevice):
+    """Identity assertions"""
+
+    # pylint: disable=too-few-public-methods
     def assert_exists(
-        self, external_id: str, external_type: str = "c8y_Serial", **kwargs
+        self,
+        external_id: str,
+        external_type: str = "c8y_Serial",
     ) -> ManagedObject:
+        """Assert that the external id exists"""
         try:
             mo = self.context.client.identity.get_object(
                 external_id=external_id, external_type=external_type
             )
-        except requests.HTTPError as ex:
-            if ex.response.status_code == 404:
-                raise DeviceNotFound()
-            raise
+        except KeyError as ex:
+            raise DeviceNotFound() from ex
 
-        assert mo
+        assert mo.id
         return mo

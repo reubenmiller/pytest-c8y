@@ -1,3 +1,4 @@
+"""Retry utils"""
 import re
 from tenacity import (
     retry,
@@ -8,7 +9,8 @@ from tenacity import (
 )
 
 
-def configure_retry(obj, func_name, **kwargs):
+def configure_retry(obj: object, func_name: str, **kwargs):
+    """Configure retry mechanism to a function"""
     retries = kwargs.get("retries", 10)
     wait = kwargs.get("wait", 2)
     timeout = kwargs.get("timeout", 5)
@@ -22,9 +24,10 @@ def configure_retry(obj, func_name, **kwargs):
     setattr(obj, func_name, decorator(getattr(obj, func_name)))
 
 
-def configure_retry_on_members(obj: object, pattern: str):
+def configure_retry_on_members(obj: object, pattern: str, **kwargs):
+    """Configure retry mechanism to all functions matching a pattern"""
     # apply retry mechanism
     pattern_re = re.compile(pattern)
     for name in dir(obj):
         if pattern_re.match(name, pos=0):
-            configure_retry(obj, name)
+            configure_retry(obj, name, **kwargs)

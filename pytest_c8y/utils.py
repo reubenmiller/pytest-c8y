@@ -1,9 +1,4 @@
-# Copyright (c) 2020 Software AG,
-# Darmstadt, Germany and/or Software AG USA Inc., Reston, VA, USA,
-# and/or its subsidiaries and/or its affiliates and/or their licensors.
-# Use, reproduction, transfer, publication or disclosure is prohibited except
-# as specifically provided for in your License Agreement with Software AG.
-
+"""Utils"""
 from __future__ import annotations
 
 import base64
@@ -12,7 +7,6 @@ import re
 from typing import List, Set, Any
 from unittest.mock import Mock
 
-import jwt
 import pytest
 from requests import request
 
@@ -96,6 +90,8 @@ def read_webcontent(source_url, target_path):
 class RandomNameGenerator:
     """Provides randomly generated names using a public service."""
 
+    # pylint: disable=too-few-public-methods
+
     wordlist_path = "wordlist.txt"
     read_webcontent(
         "https://raw.githubusercontent.com/mike-hearn/useapassphrase/master/js/wordlist.js",
@@ -130,21 +126,3 @@ def build_auth_string(auth_value: str) -> str:
     that JWT tokens always start with an '{'."""
     auth_type = "BEARER" if auth_value.startswith("ey") else "BASIC"
     return f"{auth_type} {auth_value}"
-
-
-def sample_jwt(**kwargs) -> str:
-    """Create a test JWT token (as string). Additional claims ca be
-    specified via `kwargs`."""
-    payload = {
-        "jti": None,
-        "iss": "t12345.cumulocity.com",
-        "aud": "t12345.cumulocity.com",
-        "tci": "0722ff7b-684f-4177-9614-3b7949b0b5c9",
-        "iat": 1638281885,
-        "nbf": 1638281885,
-        "exp": 1639491485,
-        "tfa": False,
-        "xsrfToken": "something",
-    }
-    payload.update(**kwargs)
-    return jwt.encode(payload, key="key")

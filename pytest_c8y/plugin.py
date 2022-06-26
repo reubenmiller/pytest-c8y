@@ -1,71 +1,30 @@
+"""Plugin
+"""
 import logging
 import os
 
 import pytest
-
-from pytest_c8y.device_management import DeviceManagement, create_context_from_identity
-from pytest_c8y.c8y import CustomCumulocityApp
-
-LOGGER = logging.getLogger(__name__)
-
-# Copyright (c) 2020 Software AG,
-# Darmstadt, Germany and/or Software AG USA Inc., Reston, VA, USA,
-# and/or its subsidiaries and/or its affiliates and/or their licensors.
-# Use, reproduction, transfer, publication or disclosure is prohibited except
-# as specifically provided for in your License Agreement with Software AG.
-
-# pylint: disable=redefined-outer-name
-
-import logging
-import os
-
-# TODO: dotenv is broken on macos arm64
-# from dotenv import load_dotenv
-import pytest
-
 from c8y_api._main_api import CumulocityApi
 from c8y_api._util import c8y_keys
 from c8y_api.model import Device
+from dotenv import load_dotenv
 
-from .utils import RandomNameGenerator
+from pytest_c8y.c8y import CustomCumulocityApp
+from pytest_c8y.device_management import DeviceManagement, create_context_from_identity
 
+from pytest_c8y.utils import RandomNameGenerator
 
-def load_dotenv(filename=".env"):
-    if os.path.exists(filename):
-        with open(filename) as file:
-            for line in file:
-                key, _, value = line.partition("=")
-                os.environ[key] = value
+LOGGER = logging.getLogger(__name__)
 
 
-@pytest.fixture(scope="session")
-def safe_executor(logger):
-    """A safe function execution wrapper.
-    This provides a `execute(fun)` function which catches/logs all
-    exceptions. It returns True if the wrapped function was executed
-    without error, False otherwise.
-    """
-    # pylint: disable=broad-except
-
-    def execute(fun) -> bool:
-        try:
-            fun()
-            return True
-        except BaseException as e:
-            logger.warning(f"Caught exception ignored due to safe call: {e}")
-        return False
-
-    return execute
-
-
-@pytest.fixture(scope="session")
-def logger():
+@pytest.fixture(scope="session", name="logger")
+def logger_fixture():
     """Provide a logger for testing."""
     return logging.getLogger("c8y_api.test")
 
 
-@pytest.fixture(scope="session")
-def test_environment(logger, variables):
+@pytest.fixture(scope="session", name="test_environment")
+def test_environment_fixture(logger, variables):
     """Prepare the environment, i.e. read a .env file if found."""
 
     logger.warning(f"Found variables: {variables}")
@@ -80,22 +39,22 @@ def test_environment(logger, variables):
                 "The following environment variables are already defined and may be overridden: "
                 + ", ".join(predefined_keys)
             )
-        # TODO: dotenv is broken on macos arm64
-
-        # load_dotenv()
-    # list C8Y_* keys
+        load_dotenv()
     defined_keys = c8y_keys()
     logger.info(f"Found the following keys: {', '.join(defined_keys)}.")
 
 
-@pytest.fixture(scope="session")
-def live_c8y(test_environment) -> CumulocityApi:
+@pytest.fixture(scope="session", name="live_c8y")
+def live_c8y_fixture() -> CumulocityApi:
     """Provide a live CumulocityApi instance as defined by the environment."""
 
-    if "C8Y_BASEURL" not in os.environ.keys():
+    if "C8Y_BASEURL" not in os.environ:
         raise RuntimeError(
-            "Missing Cumulocity environment variables (C8Y_*). Cannot create CumulocityApi instance. "
-            "Please define the required variables directly or setup a .env file."
+            (
+                "Missing Cumulocity environment variables (C8Y_*). "
+                "Cannot create CumulocityApi instance. "
+                "Please define the required variables directly or setup a .env file."
+            )
         )
     return CustomCumulocityApp()
 
@@ -140,13 +99,15 @@ def sample_device(logger: logging.Logger, live_c8y: CumulocityApi) -> Device:
 
 
 @pytest.hookimpl(trylast=True)
-def pytest_configure(config):
+def pytest_configure():
     """Configure plugin"""
     # assert config.pluginmanager.register(PyTestCumulocityPlugin(config), "pytest_c8y")
 
 
 class PyTestCumulocityPlugin:
     """Ansible PyTest Plugin Class."""
+
+    # pylint: disable=too-few-public-methods
 
     def __init__(self, config):
         """Initialize plugin."""

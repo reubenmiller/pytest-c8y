@@ -10,18 +10,24 @@ class AssertInventory(AssertDevice):
     """Inventory assertions"""
 
     def assert_contains_fragment_values(
-        self, fragments: Dict[str, Any], **kwargs
+        self,
+        fragments: Dict[str, Any],
+        mo: ManagedObject = None,
     ) -> ManagedObject:
         """Assert the present and the values of fragments in the device managed object"""
-        mo = self.context.client.inventory.get(self.context.device_id)
+        if mo is None:
+            mo = self.context.client.inventory.get(self.context.device_id)
         assert compare_dataclass(mo, fragments)
         return mo
 
     def assert_contains_fragments(
-        self, fragments: List[str], **kwargs
+        self,
+        fragments: List[str],
+        mo: ManagedObject = None,
     ) -> ManagedObject:
         """Assert the present of fragments in the device managed object (regardless of value)"""
-        mo = self.context.client.inventory.get(self.context.device_id)
+        if mo is None:
+            mo = self.context.client.inventory.get(self.context.device_id)
 
         missing = [key for key in fragments if key not in mo]
         assert (
@@ -30,19 +36,19 @@ class AssertInventory(AssertDevice):
         return mo
 
     def assert_changed(
-        self, reference_object: Dict[str, Any], fragment: str
+        self, reference_object: Dict[str, Any], fragment: str, mo: ManagedObject = None
     ) -> ManagedObject:
         """Assert that the device managed object has changed from the given reference object.
         The comparison is limited to a fragment if it is provided.
         """
         reference = reference_object.get(fragment) if fragment else reference_object
 
-        mo = self.context.client.inventory.get(self.context.device_id)
+        if mo is None:
+            mo = self.context.client.inventory.get(self.context.device_id)
         assert not compare_dataclass(mo.get(fragment), reference)
 
-    def assert_child_device_names(
-        self, expected_devices: List[str]
-    ) -> List[Dict[str, Any]]:
+    def assert_child_device_names(self, *expected_devices: str) -> List[Dict[str, Any]]:
+        """Assert that a device has child devices with the specified names"""
         response = self.context.client.get(
             f"inventory/managedObjects/{self.context.device_id}/childDevices"
         )

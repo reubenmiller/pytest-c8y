@@ -1,8 +1,11 @@
+"""Custom Cumulocity API app
+"""
 import logging
 import os
+
+from c8y_api._auth import HTTPBearerAuth
 from c8y_api.app import CumulocityApi, _CumulocityAppBase
 from requests.auth import HTTPBasicAuth
-from c8y_api._auth import HTTPBearerAuth
 
 
 class CustomCumulocityApp(_CumulocityAppBase, CumulocityApi):
@@ -65,4 +68,14 @@ class CustomCumulocityApp(_CumulocityAppBase, CumulocityApi):
             tenant_id=tenant_id,
             auth=auth,
             application_key=application_key,
+        )
+
+    def _build_user_instance(self, auth) -> CumulocityApi:
+        """Build a CumulocityApi instance for a specific user, using the
+        same Base URL, Tenant ID and Application Key as the main instance."""
+        return CumulocityApi(
+            base_url=self.base_url,
+            tenant_id=self.tenant_id,
+            auth=auth,
+            application_key=self.application_key,
         )

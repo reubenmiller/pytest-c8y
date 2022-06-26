@@ -1,24 +1,30 @@
+"""Device management assertions
+"""
 import logging
-from pytest_c8y.assert_configuration import DeviceConfiguration
-
-from pytest_c8y.context import AssertContext
-from pytest_c8y.assert_software_management import SoftwareManagement
-from pytest_c8y.assert_firmware import FirmwareManagement
-from pytest_c8y.assert_operation import AssertOperation
-from pytest_c8y.assert_inventory import AssertInventory
-from pytest_c8y.assert_measurements import AssertMeasurements
-from pytest_c8y.assert_availability import AssertDeviceAvailability
-from pytest_c8y.assert_command import Command
-from pytest_c8y.assert_events import Events
-from pytest_c8y.assert_binaries import Binaries
-from pytest_c8y.assert_identity import AssertIdentity
 
 from c8y_api import CumulocityApi
+
+from pytest_c8y.assert_availability import AssertDeviceAvailability
+from pytest_c8y.assert_binaries import Binaries
+from pytest_c8y.assert_command import Command
+from pytest_c8y.assert_configuration import DeviceConfiguration
 from pytest_c8y.assert_device import AssertDevice
-from pytest_c8y.retry import configure_retry, configure_retry_on_members
+from pytest_c8y.assert_events import Events
+from pytest_c8y.assert_firmware import FirmwareManagement
+from pytest_c8y.assert_identity import AssertIdentity
+from pytest_c8y.assert_inventory import AssertInventory
+from pytest_c8y.assert_measurements import AssertMeasurements
+from pytest_c8y.assert_operation import AssertOperation
+from pytest_c8y.assert_software_management import SoftwareManagement
+from pytest_c8y.context import AssertContext
+from pytest_c8y.retry import configure_retry_on_members
 
 
 class DeviceManagement(AssertDevice):
+    """Device management assertions"""
+
+    # pylint: disable=too-many-instance-attributes
+
     def __init__(self, context: AssertContext) -> None:
         super().__init__(context)
 
@@ -33,16 +39,16 @@ class DeviceManagement(AssertDevice):
         self.measurements = AssertMeasurements(context)
         self.software_management = SoftwareManagement(context)
 
-        self._configure_retries()
-
-    def _configure_retries(self):
+    def configure_retries(self, **kwargs):
+        """Configure retries for all assertions"""
         # apply retry mechanism
         for member in dir(self):
             current_property = getattr(self, member)
             if isinstance(current_property, AssertDevice):
-                configure_retry_on_members(current_property, "^assert_.+")
+                configure_retry_on_members(current_property, "^assert_.+", **kwargs)
 
     def set_device_id(self, device_id: str) -> "DeviceManagement":
+        """Set the current device id to be used in all assertions"""
         self.context.device_id = device_id
         return self
 
@@ -56,6 +62,7 @@ class DeviceManagement(AssertDevice):
         return self._execute(**fragments)
 
     def create_operation(self, **kwargs):
+        """Create an operation"""
         fragments = {
             "description": "Send operation",
             **kwargs,
@@ -69,6 +76,7 @@ def create_context_from_identity(
     external_id: str = None,
     external_type: str = None,
 ) -> "DeviceManagement":
+    """Create a context from a device identity"""
     context = AssertContext(client=c8y, device_id=device_id, log=logging.getLogger())
     if not device_id and external_id:
         context.device_id = c8y.identity.get_id(external_id, external_type)

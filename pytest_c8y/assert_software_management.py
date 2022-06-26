@@ -1,14 +1,21 @@
+"""Software management"""
 import dataclasses
-from typing import List
+import re
+
+from c8y_api.model import ManagedObject
+
 from pytest_c8y.assert_device import AssertDevice
 from pytest_c8y.assert_operation import AssertOperation
-
 from pytest_c8y.models import Software
 
 
 class SoftwareManagement(AssertDevice):
+    """Software management"""
+
     class Action:
         """Software actions."""
+
+        # pylint: disable=too-few-public-methods
 
         INSTALL = "install"
         DELETE = "delete"
@@ -25,7 +32,7 @@ class SoftwareManagement(AssertDevice):
         The software can be marked as install or delete
         """
         fragments = {
-            "description": f"Install software: "
+            "description": "Install software: "
             + ",".join(software.name for software in software_list),
             "c8y_SoftwareUpdate": [software.__dict__ for software in software_list],
             **kwargs,
@@ -42,7 +49,7 @@ class SoftwareManagement(AssertDevice):
     def replace(self, *software_list: Software, **kwargs) -> AssertOperation:
         """Replace the software list on a device via the c8y_SoftwareList operation"""
         fragments = {
-            "description": f"Install software: "
+            "description": "Install software: "
             + ",".join(software.name for software in software_list),
             "c8y_SoftwareList": [
                 {**software.__dict__, "action": self.Action.INSTALL}
@@ -52,25 +59,81 @@ class SoftwareManagement(AssertDevice):
         }
         return self._execute(**fragments)
 
-    def assert_software_installed(self, expected_software_list: List[Software]):
-        mo = self.context.client.inventory.get(self.context.device_id)
+    class Reasons:
+        # pylint: disable=too-few-public-methods
 
-        missing = []
-        version_mismatch = []
+        """Error reasons"""
+        MISSING = "MISSING"
+        INSTALLED = "INSTALLED"
+        VERSION_MISMATCH = "VERSION_MISMATCH"
+        VERSION_MATCH = "VERSION_MATCH"
+
+    def assert_software_installed(
+        self, *expected_software_list: Software, mo: ManagedObject = None
+    ):
+        """Assert that a list of software packages are installed.
+        If the version is empty, then version matching is skipped.
+        """
+        if mo is None:
+            mo = self.context.client.inventory.get(self.context.device_id)
+
         installed = [item["name"] for item in mo["c8y_SoftwareList"]]
+        errors = []
 
-        for item in expected_software_list:
-            if item.name not in installed:
-                missing.append(item.name)
+        for exp_software in expected_software_list:
+            if exp_software.name not in installed:
+                errors.append((exp_software.name, self.Reasons.MISSING))
+                continue
+
+            if not exp_software.version:
+                continue
+
+            # version check
+            version_pattern = re.compile(exp_software.version)
+            for current_software in mo["c8y_SoftwareList"]:
+                if current_software[
+                    "name"
+                ] == exp_software.name and version_pattern.match(
+                    current_software["version"]
+                ):
+                    break
             else:
-                version_mismatch
+                errors.append((exp_software.name, self.Reasons.VERSION_MISMATCH))
 
-    def assert_not_software_installed(self, software_list: List[str]):
-        mo = self.context.client.inventory.get(self.context.device_id)
+        assert len(errors) == 0, (
+            "Software not installed. "
+            f"errors={errors}, wanted={expected_software_list}, got={mo['c8y_SoftwareList']}"
+        )
 
-        installed_but_is = []
-        for item in mo["c8y_SoftwareList"]:
-            if item.name in software_list:
-                installed_but_is.append(item.name)
+    def assert_not_software_installed(
+        self, *unexpected_software_list: Software, mo: ManagedObject = None
+    ):
+        """Assert that a list of software packages are not installed.
+        If the version is empty, then version matching is skipped.
+        """
+        if mo is None:
+            mo = self.context.client.inventory.get(self.context.device_id)
 
-        assert installed_but_is == []
+        installed = [item["name"] for item in mo["c8y_SoftwareList"]]
+        errors = []
+
+        for exp_software in unexpected_software_list:
+            if exp_software.name in installed and not exp_software.version:
+                errors.append((exp_software.name, self.Reasons.INSTALLED))
+                continue
+
+            # version check
+            version_pattern = re.compile(exp_software.version)
+            for current_software in mo["c8y_SoftwareList"]:
+                if current_software[
+                    "name"
+                ] == exp_software.name and version_pattern.match(
+                    current_software["version"]
+                ):
+                    errors.append((exp_software.name, self.Reasons.VERSION_MATCH))
+                    break
+
+        assert len(errors) == 0, (
+            "Unwanted software installed. "
+            f"errors={errors}, unwanted={unexpected_software_list}, got={mo['c8y_SoftwareList']}"
+        )
