@@ -6,8 +6,32 @@ from pytest_c8y.assert_device import AssertDevice
 from pytest_c8y.compare import compare_dataclass
 
 
+class InventoryNotFound(AssertionError):
+    """Inventory not found"""
+
+
+class InventoryFound(AssertionError):
+    """Inventory found"""
+
+
 class AssertInventory(AssertDevice):
     """Inventory assertions"""
+
+    def assert_exists(self, inventory_id: str) -> ManagedObject:
+        """Assert that an inventory managed object exists"""
+        try:
+            return self.context.client.inventory.get(inventory_id)
+        except KeyError as ex:
+            raise InventoryNotFound from ex
+
+    def assert_not_exists(self, inventory_id: str) -> None:
+        """Assert that an inventory managed object does not exist"""
+        try:
+            # expected to throw an error
+            self.context.client.inventory.get(inventory_id)
+            raise InventoryFound()
+        except KeyError:
+            return
 
     def assert_contains_fragment_values(
         self,
