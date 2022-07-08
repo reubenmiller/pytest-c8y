@@ -7,6 +7,10 @@ from c8y_api.model import Event
 from pytest_c8y.assert_device import AssertDevice
 
 
+class EventNotFound(AssertionError):
+    """Event not found"""
+
+
 class Events(AssertDevice):
     """Event assertions"""
 
@@ -29,3 +33,10 @@ class Events(AssertDevice):
             f"wanted={min_matches} (min), got={len(matching_events)}"
         )
         return matching_events
+
+    def assert_exists(self, event_id: str) -> Event:
+        """Assert that an event exists and return it if found"""
+        try:
+            return self.context.client.events.get(event_id)
+        except KeyError as ex:
+            raise EventNotFound() from ex
