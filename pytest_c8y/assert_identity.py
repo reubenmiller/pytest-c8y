@@ -16,6 +16,7 @@ class AssertIdentity(AssertDevice):
         self,
         external_id: str,
         external_type: str = "c8y_Serial",
+        **kwargs,
     ) -> ManagedObject:
         """Assert that the external id exists"""
         try:

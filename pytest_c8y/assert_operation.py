@@ -20,7 +20,7 @@ class AssertOperation:
         self.operation = self.context.client.operations.get(self.operation.id)
         return self
 
-    def assert_success(self) -> Operation:
+    def assert_success(self, **kwargs) -> Operation:
         """Assert that the operation status to be set to SUCCESS"""
         self.fetch_operation()
         assert self.operation.status == Operation.Status.SUCCESSFUL, (
@@ -29,7 +29,7 @@ class AssertOperation:
         )
         return self.operation
 
-    def assert_pending(self) -> Operation:
+    def assert_pending(self, **kwargs) -> Operation:
         """Assert that the operation status to be set to PENDING"""
         self.fetch_operation()
         assert self.operation.status == Operation.Status.PENDING, (
@@ -38,7 +38,7 @@ class AssertOperation:
         )
         return self.operation
 
-    def assert_failed(self, failure_reason: str = ".+") -> Operation:
+    def assert_failed(self, failure_reason: str = ".+", **kwargs) -> Operation:
         """Assert that the operation status to be set to FAILED"""
         self.fetch_operation()
         assert (
@@ -47,7 +47,7 @@ class AssertOperation:
         assert self.operation["failureReason"] == compare.RegexPattern(failure_reason)
         return self.operation
 
-    def assert_done(self) -> Operation:
+    def assert_done(self, **kwargs) -> Operation:
         """Assert that the operation status is either SUCCESS or FAILED"""
         self.fetch_operation()
         assert self.operation.status in (
@@ -56,7 +56,7 @@ class AssertOperation:
         ), f"Expected operation to be done, but got: {self.operation.status}"
         return self.operation
 
-    def assert_not_pending(self) -> Operation:
+    def assert_not_pending(self, **kwargs) -> Operation:
         """Assert that the operation status to be not PENDING"""
         self.fetch_operation()
         assert self.operation.status != Operation.Status.PENDING, (

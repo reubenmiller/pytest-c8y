@@ -34,7 +34,7 @@ class Events(AssertDevice):
         )
         return matching_events
 
-    def assert_exists(self, event_id: str) -> Event:
+    def assert_exists(self, event_id: str, **kwargs) -> Event:
         """Assert that an event exists and return it if found"""
         try:
             return self.context.client.events.get(event_id)

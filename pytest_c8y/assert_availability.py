@@ -24,6 +24,7 @@ class AssertDeviceAvailability(AssertDevice):
     def assert_device_available(
         self,
         mo: ManagedObject = None,
+        **kwargs,
     ) -> ManagedObject:
         """Assert that the device availability status (c8y_Availability.status)
         is set to AVAILABLE
@@ -39,6 +40,7 @@ class AssertDeviceAvailability(AssertDevice):
     def assert_device_unavailable(
         self,
         mo: ManagedObject = None,
+        **kwargs,
     ) -> ManagedObject:
         """Assert that the device availability status (c8y_Availability.status)
         is set to UNAVAILABLE
@@ -54,6 +56,7 @@ class AssertDeviceAvailability(AssertDevice):
     def assert_device_maintenance(
         self,
         mo: ManagedObject = None,
+        **kwargs,
     ) -> ManagedObject:
         """Assert that the device availability status (c8y_Availability.status)
         is set to MAINTENANCE
@@ -69,6 +72,7 @@ class AssertDeviceAvailability(AssertDevice):
     def assert_device_connected(
         self,
         mo: ManagedObject = None,
+        **kwargs,
     ) -> ManagedObject:
         """Assert that the device connection status (c8y_Availability.status)
         is set to CONNECTED
@@ -83,6 +87,7 @@ class AssertDeviceAvailability(AssertDevice):
     def assert_device_disconnected(
         self,
         mo: ManagedObject = None,
+        **kwargs,
     ) -> ManagedObject:
         """Assert that the device connection status (c8y_Connection.status)
         is set to DISCONNECTED

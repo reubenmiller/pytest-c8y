@@ -21,7 +21,7 @@ class FirmwareManagement(AssertDevice):
         return self._execute(**fragments)
 
     def assert_firmware(
-        self, expected_firmware: Firmware, mo: ManagedObject = None
+        self, expected_firmware: Firmware, mo: ManagedObject = None, **kwargs
     ) -> ManagedObject:
         """Assert a firmware name and optional version"""
         if mo is None:
@@ -34,7 +34,7 @@ class FirmwareManagement(AssertDevice):
         return mo
 
     def assert_not_firmware(
-        self, expected_firmware: Firmware, mo: ManagedObject = None
+        self, expected_firmware: Firmware, mo: ManagedObject = None, **kwargs
     ):
         """Assert that the device firmware does not match"""
         if mo is None:

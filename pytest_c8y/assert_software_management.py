@@ -69,7 +69,7 @@ class SoftwareManagement(AssertDevice):
         VERSION_MATCH = "VERSION_MATCH"
 
     def assert_software_installed(
-        self, *expected_software_list: Software, mo: ManagedObject = None
+        self, *expected_software_list: Software, mo: ManagedObject = None, **kwargs
     ):
         """Assert that a list of software packages are installed.
         If the version is empty, then version matching is skipped.
@@ -106,7 +106,7 @@ class SoftwareManagement(AssertDevice):
         )
 
     def assert_not_software_installed(
-        self, *unexpected_software_list: Software, mo: ManagedObject = None
+        self, *unexpected_software_list: Software, mo: ManagedObject = None, **kwargs
     ):
         """Assert that a list of software packages are not installed.
         If the version is empty, then version matching is skipped.

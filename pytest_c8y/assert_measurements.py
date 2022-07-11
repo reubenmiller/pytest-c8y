@@ -15,7 +15,9 @@ class AssertMeasurements(AssertDevice):
         )
         return response["c8y_SupportedSeries"]
 
-    def assert_supported_series_contains(self, *expected_series: str) -> ManagedObject:
+    def assert_supported_series_contains(
+        self, *expected_series: str, **kwargs
+    ) -> ManagedObject:
         """Assert presence of a subset of series in the supported series list"""
         missing = []
         current_series = self._get_supported_series()
@@ -30,6 +32,7 @@ class AssertMeasurements(AssertDevice):
     def assert_supported_series(
         self,
         *expected_series: str,
+        **kwargs,
     ) -> ManagedObject:
         """Assert exact supported series"""
 
@@ -41,6 +44,7 @@ class AssertMeasurements(AssertDevice):
         self,
         _exp_min_count: int = 1,
         _exp_max_count: int = None,
+        **kwargs,
     ):
         """Assert a minimum measurement count"""
         raise NotImplementedError(

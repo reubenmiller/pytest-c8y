@@ -1,5 +1,6 @@
 """Assert operation tests"""
 from c8y_api.model import Device, Operation
+from tenacity import stop_after_delay
 from pytest_c8y.device_management import DeviceManagement
 
 
@@ -16,7 +17,7 @@ def test_assert_operation_status(sample_device: Device, device_mgmt: DeviceManag
 
     operation.operation["status"] = Operation.Status.SUCCESSFUL
     operation.operation.update()
-    operation.assert_success()
+    operation.assert_success(timeout=1)
 
     operation.operation["status"] = Operation.Status.FAILED
     operation.operation["failureReason"] = "Something went wrong"

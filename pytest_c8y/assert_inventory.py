@@ -17,14 +17,14 @@ class InventoryFound(AssertionError):
 class AssertInventory(AssertDevice):
     """Inventory assertions"""
 
-    def assert_exists(self, inventory_id: str) -> ManagedObject:
+    def assert_exists(self, inventory_id: str, **kwargs) -> ManagedObject:
         """Assert that an inventory managed object exists"""
         try:
             return self.context.client.inventory.get(inventory_id)
         except KeyError as ex:
             raise InventoryNotFound from ex
 
-    def assert_not_exists(self, inventory_id: str) -> None:
+    def assert_not_exists(self, inventory_id: str, **kwargs) -> None:
         """Assert that an inventory managed object does not exist"""
         try:
             # expected to throw an error
@@ -37,6 +37,7 @@ class AssertInventory(AssertDevice):
         self,
         fragments: Dict[str, Any],
         mo: ManagedObject = None,
+        **kwargs,
     ) -> ManagedObject:
         """Assert the present and the values of fragments in the device managed object"""
         if mo is None:
@@ -48,6 +49,7 @@ class AssertInventory(AssertDevice):
         self,
         fragments: List[str],
         mo: ManagedObject = None,
+        **kwargs,
     ) -> ManagedObject:
         """Assert the present of fragments in the device managed object (regardless of value)"""
         if mo is None:
@@ -60,7 +62,11 @@ class AssertInventory(AssertDevice):
         return mo
 
     def assert_changed(
-        self, reference_object: Dict[str, Any], fragment: str, mo: ManagedObject = None
+        self,
+        reference_object: Dict[str, Any],
+        fragment: str,
+        mo: ManagedObject = None,
+        **kwargs,
     ) -> ManagedObject:
         """Assert that the device managed object has changed from the given reference object.
         The comparison is limited to a fragment if it is provided.
@@ -71,7 +77,9 @@ class AssertInventory(AssertDevice):
             mo = self.context.client.inventory.get(self.context.device_id)
         assert not compare_dataclass(mo.get(fragment), reference)
 
-    def assert_child_device_names(self, *expected_devices: str) -> List[Dict[str, Any]]:
+    def assert_child_device_names(
+        self, *expected_devices: str, **kwargs
+    ) -> List[Dict[str, Any]]:
         """Assert that a device has child devices with the specified names"""
         response = self.context.client.get(
             f"inventory/managedObjects/{self.context.device_id}/childDevices"
