@@ -44,6 +44,7 @@ class AssertOperation:
         assert (
             self.operation.status == Operation.Status.FAILED
         ), f"Expected operation to be {Operation.Status.FAILED}, but got: {self.operation.status}"
+        assert "failureReason" in self.operation, "failureReason is mandatory when setting to FAILED"
         assert self.operation["failureReason"] == compare.RegexPattern(failure_reason)
         return self.operation
 
