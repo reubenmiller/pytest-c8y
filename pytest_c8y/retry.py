@@ -16,7 +16,7 @@ def configure_retry(obj: object, func_name: str, **kwargs):
     """Configure retry mechanism to a function"""
     retries = kwargs.get("retries", 10)
     wait = kwargs.get("wait", 2)
-    timeout = kwargs.get("timeout", 5)
+    timeout = kwargs.get("timeout", 30)
 
     decorator = retry(
         retry=retry_if_exception_type(AssertionError),
@@ -49,7 +49,7 @@ def retrier(func, *args, **kwargs):
     try:
         retries = kwargs.get("retries", 10)
         wait = kwargs.get("wait", 2)
-        timeout = kwargs.get("timeout", 5)
+        timeout = kwargs.get("timeout", 30)
 
         for attempt in Retrying(
             retry=retry_if_exception_type(AssertionError),
