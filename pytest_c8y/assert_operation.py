@@ -39,13 +39,23 @@ class AssertOperation:
         return self.operation
 
     def assert_failed(self, failure_reason: str = ".+", **kwargs) -> Operation:
-        """Assert that the operation status to be set to FAILED"""
+        """Assert that the operation status to be set to FAILED
+
+        Args:
+            failure_reason (str, optional): Assert a failure reason using a regex pattern.
+                If set to None, then it is skipped. Defaults to ".+".
+
+        Returns:
+            Operation: Current operation
+        """
         self.fetch_operation()
         assert (
             self.operation.status == Operation.Status.FAILED
         ), f"Expected operation to be {Operation.Status.FAILED}, but got: {self.operation.status}"
-        assert "failureReason" in self.operation, "failureReason is mandatory when setting to FAILED"
-        assert self.operation["failureReason"] == compare.RegexPattern(failure_reason)
+
+        if failure_reason is not None:
+            assert "failureReason" in self.operation, "failureReason is mandatory when setting to FAILED"
+            assert self.operation["failureReason"] == compare.RegexPattern(failure_reason)
         return self.operation
 
     def assert_done(self, **kwargs) -> Operation:
