@@ -64,7 +64,7 @@ def retrier(func, *args, **kwargs):
     except Exception as ex:
         # Append additional context information
         message = (
-            f"duration={attempt.retry_state.seconds_since_start:.3f}, "
+            f"duration={attempt.retry_state.seconds_since_start:.3f}s, "
             f"attempts={attempt.retry_state.attempt_number}, "
             f"timeout={timeout:.3f}s, retries={retries}, wait={wait:.3f}s"
         )
