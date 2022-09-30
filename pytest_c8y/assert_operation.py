@@ -25,7 +25,7 @@ class AssertOperation:
         self.fetch_operation()
         assert self.operation.status == Operation.Status.SUCCESSFUL, (
             f"Expected operation to be {Operation.Status.SUCCESSFUL}, "
-            f"but got: {self.operation.status}"
+            f"but got: {self.operation.status} (failureReason: {self.operation.to_json().get('failureReason')})"
         )
         return self.operation
 
