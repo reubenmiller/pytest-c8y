@@ -24,7 +24,7 @@ class AssertOperation:
         """Assert that the operation status to be set to SUCCESS"""
         self.fetch_operation()
         assert self.operation.status == Operation.Status.SUCCESSFUL, (
-            f"Expected operation to be {Operation.Status.SUCCESSFUL}, "
+            f"Expected operation (id={self.operation.id}) to be {Operation.Status.SUCCESSFUL}, "
             f"but got: {self.operation.status} "
             f"(failureReason: {self.operation.to_json().get('failureReason', '')})"
         )
@@ -34,7 +34,7 @@ class AssertOperation:
         """Assert that the operation status to be set to PENDING"""
         self.fetch_operation()
         assert self.operation.status == Operation.Status.PENDING, (
-            f"Expected operation to be {Operation.Status.PENDING}, "
+            f"Expected operation (id={self.operation.id}) to be {Operation.Status.PENDING}, "
             f"but got: {self.operation.status}"
         )
         return self.operation
@@ -50,13 +50,18 @@ class AssertOperation:
             Operation: Current operation
         """
         self.fetch_operation()
-        assert (
-            self.operation.status == Operation.Status.FAILED
-        ), f"Expected operation to be {Operation.Status.FAILED}, but got: {self.operation.status}"
+        assert self.operation.status == Operation.Status.FAILED, (
+            f"Expected operation (id={self.operation.id}) to be {Operation.Status.FAILED}, "
+            f"but got: {self.operation.status}"
+        )
 
         if failure_reason is not None:
-            assert "failureReason" in self.operation, "failureReason is mandatory when setting to FAILED"
-            assert self.operation["failureReason"] == compare.RegexPattern(failure_reason)
+            assert (
+                "failureReason" in self.operation
+            ), "failureReason is mandatory when setting to FAILED"
+            assert self.operation["failureReason"] == compare.RegexPattern(
+                failure_reason
+            )
         return self.operation
 
     def assert_done(self, **kwargs) -> Operation:
@@ -65,14 +70,17 @@ class AssertOperation:
         assert self.operation.status in (
             Operation.Status.SUCCESSFUL,
             Operation.Status.FAILED,
-        ), f"Expected operation to be done, but got: {self.operation.status}"
+        ), (
+            f"Expected operation (id={self.operation.id}) to be done, "
+            f"but got: {self.operation.status}"
+        )
         return self.operation
 
     def assert_not_pending(self, **kwargs) -> Operation:
         """Assert that the operation status to be not PENDING"""
         self.fetch_operation()
         assert self.operation.status != Operation.Status.PENDING, (
-            f"Expected operation to not be {Operation.Status.PENDING}, "
+            f"Expected operation (id={self.operation.id}) to not be {Operation.Status.PENDING}, "
             f"but got: {self.operation.status}"
         )
         return self.operation
