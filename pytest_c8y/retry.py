@@ -14,13 +14,12 @@ from tenacity import (
 
 def configure_retry(obj: object, func_name: str, **kwargs):
     """Configure retry mechanism to a function"""
-    retries = kwargs.get("retries", 10)
     wait = kwargs.get("wait", 2)
     timeout = kwargs.get("timeout", 30)
 
     decorator = retry(
         retry=retry_if_exception_type(AssertionError),
-        stop=(stop_after_delay(timeout) | stop_after_attempt(retries)),
+        stop=(stop_after_delay(timeout)),
         wait=wait_fixed(wait),
         reraise=True,
     )
@@ -47,13 +46,12 @@ def configure_retry_on_members(obj: object, pattern: str, **kwargs):
 def retrier(func, *args, **kwargs):
     attempt = None
     try:
-        retries = kwargs.get("retries", 10)
         wait = kwargs.get("wait", 2)
         timeout = kwargs.get("timeout", 30)
 
         for attempt in Retrying(
             retry=retry_if_exception_type(AssertionError),
-            stop=(stop_after_delay(timeout) | stop_after_attempt(retries)),
+            stop=(stop_after_delay(timeout)),
             wait=wait_fixed(wait),
             reraise=True,
         ):
@@ -64,9 +62,8 @@ def retrier(func, *args, **kwargs):
     except Exception as ex:
         # Append additional context information
         message = (
-            f"duration={attempt.retry_state.seconds_since_start:.3f}s, "
+            f"Retries ended. duration={attempt.retry_state.seconds_since_start:.3f}s, "
             f"attempts={attempt.retry_state.attempt_number}, "
-            f"timeout={timeout:.3f}s, retries={retries}, wait={wait:.3f}s"
+            f"timeout={timeout:.3f}s, wait={wait:.3f}s"
         )
-        ex.args += (message,)
-        raise ex
+        raise AssertionError(message)
