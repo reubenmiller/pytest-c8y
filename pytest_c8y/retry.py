@@ -66,4 +66,4 @@ def retrier(func, *args, **kwargs):
             f"attempts={attempt.retry_state.attempt_number}, "
             f"timeout={timeout:.3f}s, wait={wait:.3f}s"
         )
-        raise AssertionError(message)
+        raise AssertionError(message) from ex
