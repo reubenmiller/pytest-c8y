@@ -1,4 +1,5 @@
 """Operation assertions"""
+from typing import Any, Dict
 from c8y_api.model import Operation
 
 from pytest_c8y.context import AssertContext
@@ -14,6 +15,10 @@ class AssertOperation:
         self.context = context
         self.operation = operation
         configure_retry_on_members(self, "^assert_.+", **kwargs)
+
+    def to_json(self) -> Dict[str, Any]:
+        """Get operation as dictionary"""
+        return self.operation.to_json()
 
     def fetch_operation(self):
         """Refresh the operation by fetching it again from the platform"""
