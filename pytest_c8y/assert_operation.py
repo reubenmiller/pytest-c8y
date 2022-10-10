@@ -63,10 +63,15 @@ class AssertOperation:
             Operation: Current operation
         """
         self.fetch_operation()
-        assert self.operation.status == Operation.Status.FAILED, (
-            f"Expected operation (id={self.operation.id}) to be {Operation.Status.FAILED}, "
-            f"but got: {self.operation.status}"
-        )
+        try:
+            assert self.operation.status == Operation.Status.FAILED, (
+                f"Expected operation (id={self.operation.id}) to be {Operation.Status.FAILED}, "
+                f"but got: {self.operation.status}"
+            )
+        except AssertionError as ex:
+            if self.operation.status == Operation.Status.SUCCESSFUL:
+                raise FinalAssertionError(ex)
+            raise
 
         if failure_reason is not None:
             assert (
