@@ -28,11 +28,17 @@ class AssertOperation:
     def assert_success(self, **kwargs) -> Operation:
         """Assert that the operation status to be set to SUCCESS"""
         self.fetch_operation()
-        assert self.operation.status == Operation.Status.SUCCESSFUL, (
-            f"Expected operation (id={self.operation.id}) to be {Operation.Status.SUCCESSFUL}, "
-            f"but got: {self.operation.status} "
-            f"(failureReason: {self.operation.to_json().get('failureReason', '')})"
-        )
+
+        try:
+            assert self.operation.status == Operation.Status.SUCCESSFUL, (
+                f"Expected operation (id={self.operation.id}) to be {Operation.Status.SUCCESSFUL}, "
+                f"but got: {self.operation.status} "
+                f"(failureReason: {self.operation.to_json().get('failureReason', '')})"
+            )
+        except AssertionError as ex:
+            if self.operation.status == Operation.Status.FAILED:
+                raise FinalAssertionError(ex)
+
         return self.operation
 
     def assert_pending(self, **kwargs) -> Operation:

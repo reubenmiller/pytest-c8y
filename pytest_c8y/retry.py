@@ -1,11 +1,13 @@
 """Retry utils"""
 import re
 from functools import wraps
+from pytest_c8y.errors import FinalAssertionError
 from tenacity import (
     RetryError,
     Retrying,
     retry,
     retry_if_exception_type,
+    retry_if_not_exception_type,
     stop_after_attempt,
     stop_after_delay,
     wait_fixed,
@@ -50,7 +52,10 @@ def retrier(func, *args, **kwargs):
         timeout = kwargs.get("timeout", 30)
 
         for attempt in Retrying(
-            retry=retry_if_exception_type(AssertionError),
+            retry=(
+                retry_if_exception_type(AssertionError)
+                & retry_if_not_exception_type(FinalAssertionError)
+            ),
             stop=(stop_after_delay(timeout)),
             wait=wait_fixed(wait),
             reraise=True,
