@@ -5,6 +5,7 @@ from c8y_api.model import Operation
 from pytest_c8y.context import AssertContext
 from pytest_c8y.retry import configure_retry_on_members
 
+from .errors import FinalAssertionError
 from . import compare
 
 
@@ -38,6 +39,7 @@ class AssertOperation:
         except AssertionError as ex:
             if self.operation.status == Operation.Status.FAILED:
                 raise FinalAssertionError(ex)
+            raise
 
         return self.operation
 
