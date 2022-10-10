@@ -55,10 +55,11 @@ class AssertInventory(AssertDevice):
         if mo is None:
             mo = self.context.client.inventory.get(self.context.device_id)
 
-        missing = [key for key in fragments if key not in mo]
+        mo_dict = mo.to_json()
+        missing = [key for key in fragments if key not in mo_dict]
         assert (
             missing == []
-        ), f"Device is missing some fragments. wanted={missing}, got={mo.keys()}"
+        ), f"Device is missing some fragments. wanted={missing}, got={list(mo_dict.keys())}"
         return mo
 
     def assert_changed(
