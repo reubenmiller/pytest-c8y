@@ -54,10 +54,10 @@ class Binaries(AssertDevice):
                 **kwargs
             ).create()
             
-            binary_url = "/".join(
+            binary_url = "/".join([
                 self.context.client.base_url.rstrip("/"),
                 self.context.client.binaries.build_object_path(binary.id).lstrip("/")
-            )
+            ])
             try:
                 # Use custom binary reference as the Binary class does not keep a self reference
                 # and even if it did, it is the internal address and not the public domain one
