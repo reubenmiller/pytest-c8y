@@ -13,7 +13,9 @@ class DeviceConfiguration(AssertDevice):
         """Create a configuration operation c8y_DownloadConfigFile
         This should trigger the device/agent to download the configuration from the provided url
         """
+        config_type = configuration.__dict__.get("type", "")
         fragments = {
+            "description": f"Send configuration snapshot {config_type} to device",
             "c8y_DownloadConfigFile": configuration.__dict__,
             **kwargs,
         }
@@ -27,7 +29,9 @@ class DeviceConfiguration(AssertDevice):
 
         This should trigger the device/agent to uploaded the configuration type to the platform
         """
+        config_type = configuration.__dict__.get("type", "")
         fragments = {
+            "description": f"Retrieve {config_type} configuration snapshot from device",
             "c8y_UploadConfigFile": configuration.__dict__,
             **kwargs,
         }
