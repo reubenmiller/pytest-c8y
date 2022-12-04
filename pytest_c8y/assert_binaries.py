@@ -9,8 +9,8 @@ from pytest_c8y.assert_device import AssertDevice
 
 
 class BinaryReference:
-    """Binary references to store both the binary object and the url to it
-    """
+    """Binary references to store both the binary object and the url to it"""
+
     def __init__(self, binary: Binary, url: str) -> None:
         self.binary = binary
         self.url = url
@@ -53,11 +53,15 @@ class Binaries(AssertDevice):
                 file=str(file),
                 **kwargs
             ).create()
-            
-            binary_url = "/".join([
-                self.context.client.base_url.rstrip("/"),
-                self.context.client.binaries.build_object_path(binary.id).lstrip("/")
-            ])
+
+            binary_url = "/".join(
+                [
+                    self.context.client.base_url.rstrip("/"),
+                    self.context.client.binaries.build_object_path(binary.id).lstrip(
+                        "/"
+                    ),
+                ]
+            )
             try:
                 # Use custom binary reference as the Binary class does not keep a self reference
                 # and even if it did, it is the internal address and not the public domain one
