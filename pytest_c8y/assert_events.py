@@ -21,6 +21,7 @@ class Events(AssertDevice):
         self,
         expected_text: str = None,
         min_matches: int = 1,
+        max_matches: int = None,
         with_attachment: bool = None,
         **kwargs,
     ) -> List[Event]:
@@ -29,6 +30,7 @@ class Events(AssertDevice):
         Args:
             expected_text (str, optional): Expected matching text
             min_matches (int, optional): Expected minimum number of events. Defaults to 1.
+            max_matches (int, optional): Expected maximum number of events. Defaults to None.
             with_attachment (bool, optional): Only match events with an attachment.
                 If set to True, it will override any 'fragment' kwargs provided!
 
@@ -55,6 +57,12 @@ class Events(AssertDevice):
             "Event count is less than expected. "
             f"wanted={min_matches} (min), got={len(matching_events)}"
         )
+
+        if max_matches is not None:
+            assert len(matching_events) <= max_matches, (
+                "Event count is more than expected. "
+                f"wanted={max_matches} (max), got={len(matching_events)}"
+            )
         return matching_events
 
     def assert_exists(self, event_id: str, **kwargs) -> Event:
