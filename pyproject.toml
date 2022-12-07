@@ -4,7 +4,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "pytest-c8y"
-version = "0.0.30"
+version = "0.0.31"
 description = "pytest plugin for Cumulocity IoT"
 license = "MPL-2.0"
 authors = [
