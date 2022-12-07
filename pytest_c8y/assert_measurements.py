@@ -11,7 +11,7 @@ class AssertMeasurements(AssertDevice):
 
     def _get_supported_series(self) -> List[str]:
         response = self.context.client.get(
-            f"inventory/managedObjects/{self.context.device_id}/supportedSeries"
+            f"/inventory/managedObjects/{self.context.device_id}/supportedSeries"
         )
         return response["c8y_SupportedSeries"]
 
