@@ -93,7 +93,7 @@ class AssertInventory(AssertDevice):
             mo = self.context.client.inventory.get(self.context.device_id)
         assert not compare_dataclass(mo.get(fragment), reference)
 
-    def assert_child_devices(
+    def assert_child_device_count(
         self, min_count: int = 1, max_count: int = None, **kwargs
     ) -> List[Dict[str, Any]]:
         """Assert that a device has a specific number of child devices"""
@@ -128,10 +128,9 @@ class AssertInventory(AssertDevice):
 
         children = []
         for child in response.get("references"):
-            children += {
-                "id": child.get("id"),
-                "name": child.get("name"),
-            }
+            child_mo = child.get("managedObject", {})
+            if child_mo:
+                children.append(child_mo)
 
         assert sorted(expected_devices) == sorted(map(lambda x: x["name"], children))
         return children
