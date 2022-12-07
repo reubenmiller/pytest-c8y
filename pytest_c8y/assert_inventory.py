@@ -78,12 +78,37 @@ class AssertInventory(AssertDevice):
             mo = self.context.client.inventory.get(self.context.device_id)
         assert not compare_dataclass(mo.get(fragment), reference)
 
+    def assert_child_devices(
+        self, min_count: int = 1, max_count: int = None, **kwargs
+    ) -> List[Dict[str, Any]]:
+        """Assert that a device has a specific number of child devices"""
+        response = self.context.client.get(
+            f"/inventory/managedObjects/{self.context.device_id}/childDevices",
+            params={
+                "pageSize": 2000,
+            },
+        )
+
+        children = response.get("references")
+
+        if min_count is not None:
+            assert (
+                len(children) >= min_count
+            ), f"Expected total child devices count to be greater than or equal to {min_count}"
+
+        if max_count is not None:
+            assert (
+                len(children) <= max_count
+            ), f"Expected total child devices count to be less than or equal to {max_count}"
+
+        return children
+
     def assert_child_device_names(
         self, *expected_devices: str, **kwargs
     ) -> List[Dict[str, Any]]:
         """Assert that a device has child devices with the specified names"""
         response = self.context.client.get(
-            f"inventory/managedObjects/{self.context.device_id}/childDevices"
+            f"/inventory/managedObjects/{self.context.device_id}/childDevices"
         )
 
         children = []
