@@ -57,7 +57,7 @@ class AssertInventory(AssertDevice):
         """Assert the present and the values of fragments in the device managed object"""
         if mo is None:
             mo = self.context.client.inventory.get(self.context.device_id)
-        assert compare_dataclass(mo, fragments)
+        assert compare_dataclass(mo.to_json(), fragments)
         return mo
 
     def assert_contains_fragments(
@@ -91,7 +91,7 @@ class AssertInventory(AssertDevice):
 
         if mo is None:
             mo = self.context.client.inventory.get(self.context.device_id)
-        assert not compare_dataclass(mo.get(fragment), reference)
+        assert not compare_dataclass(mo.to_json().get(fragment), reference)
 
     def assert_child_device_count(
         self, min_count: int = 1, max_count: int = None, **kwargs
