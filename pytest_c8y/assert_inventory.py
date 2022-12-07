@@ -17,16 +17,31 @@ class InventoryFound(AssertionError):
 class AssertInventory(AssertDevice):
     """Inventory assertions"""
 
-    def assert_exists(self, inventory_id: str, **kwargs) -> ManagedObject:
-        """Assert that an inventory managed object exists"""
+    def assert_exists(self, inventory_id: str = None, **kwargs) -> ManagedObject:
+        """Assert that an inventory managed object exists
+        Args:
+            inventory_id (str, optional): managed object to check if it exists. If None
+                then the device_id in the context will be used.
+        """
         try:
+            if inventory_id is None:
+                inventory_id = self.context.device_id
+
             return self.context.client.inventory.get(inventory_id)
         except KeyError as ex:
             raise InventoryNotFound from ex
 
-    def assert_not_exists(self, inventory_id: str, **kwargs) -> None:
-        """Assert that an inventory managed object does not exist"""
+    def assert_not_exists(self, inventory_id: str = None, **kwargs) -> None:
+        """Assert that an inventory managed object does not exist
+
+        Args:
+            inventory_id (str, optional): managed object to check if it exists. If None
+                then the device_id in the context will be used.
+        """
         try:
+            if inventory_id is None:
+                inventory_id = self.context.device_id
+
             # expected to throw an error
             self.context.client.inventory.get(inventory_id)
             raise InventoryFound()
