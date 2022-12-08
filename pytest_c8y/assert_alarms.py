@@ -17,9 +17,19 @@ class Alarms(AssertDevice):
     # pylint: disable=too-few-public-methods
 
     def assert_count(
-        self, expected_text: str = None, min_matches: int = 1, **kwargs
+        self, expected_text: str = None, min_matches: int = 1, max_matches: int = None, **kwargs
     ) -> List[Alarm]:
-        """Assert a minimum count of matches alarms."""
+        """
+        Assert a count of matching alarms
+
+        Args:
+            expected_text (str, optional): Expected matching text
+            min_matches (int, optional): Expected minimum number of alarms. Defaults to 1.
+            max_matches (int, optional): Expected maximum number of alarms. Defaults to None.
+
+        Returns:
+            List[Alarm]: List of matching alarms
+        """
         source = kwargs.pop("source", self.context.device_id)
         alarms = self.context.client.alarms.get_all(source=source, **kwargs)
 
@@ -32,6 +42,13 @@ class Alarms(AssertDevice):
             "Alarm count is less than expected. "
             f"wanted={min_matches} (min), got={len(matching_alarms)}"
         )
+
+        if max_matches is not None:
+            assert len(matching_alarms) <= max_matches, (
+                "Alarm count is more than expected. "
+                f"wanted={max_matches} (max), got={len(matching_alarms)}"
+            )
+
         return matching_alarms
 
     def assert_exists(self, alarm_id: str, **kwargs) -> Alarm:
