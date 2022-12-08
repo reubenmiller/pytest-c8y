@@ -57,22 +57,16 @@ class AssertMeasurements(AssertDevice):
         Returns:
             List[Any]: List of measurements
         """
-        source = kwargs.pop("source", self.context.device_id)
-        params = {
-            "pageSize": kwargs.pop("pageSize", 2000),
-            "withTotalElements": "true",
+        source = kwargs.pop("source", self.context.device_id) or None
+        page_size = kwargs.pop("pageSize", 2000)
+        
+        measurements = self.context.client.measurements.get_all(
+            source=source,
+            page_size=page_size,
             **kwargs,
-        }
-
-        if source:
-            params["source"] = source
-
-        response = self.context.client.get(
-            self.context.client.measurements.resource,
-            params=params,
         )
 
-        total = response["statistics"]["totalElements"] or 0
+        total = len(measurements)
 
         if min_count is not None and max_count is not None:
             assert min_count <= total <= max_count
@@ -81,4 +75,4 @@ class AssertMeasurements(AssertDevice):
         elif min_count is None and max_count is not None:
             assert total <= max_count
 
-        return [Measurement.from_json(item) for item in response["measurements"]]
+        return measurements
