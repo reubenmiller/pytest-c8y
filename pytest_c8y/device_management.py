@@ -9,6 +9,7 @@ from pytest_c8y.assert_binaries import Binaries
 from pytest_c8y.assert_command import Command
 from pytest_c8y.assert_configuration import DeviceConfiguration
 from pytest_c8y.assert_device import AssertDevice
+from pytest_c8y.assert_device_certificate import AssertDeviceCertificate
 from pytest_c8y.assert_alarms import Alarms
 from pytest_c8y.assert_events import Events
 from pytest_c8y.assert_firmware import FirmwareManagement
@@ -35,6 +36,7 @@ class DeviceManagement(AssertDevice):
         self.configuration = DeviceConfiguration(context)
         self.logs = DeviceLogFile(context)
         self.device_status = AssertDeviceAvailability(context)
+        self.trusted_certificates = AssertDeviceCertificate(context)
         self.alarms = Alarms(context)
         self.events = Events(context)
         self.firmware_management = FirmwareManagement(context)
