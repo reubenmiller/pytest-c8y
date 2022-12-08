@@ -1,9 +1,13 @@
 """Inventory assertions
 """
+import logging
 from typing import Any, Dict, List
 from c8y_api.model import ManagedObject
 from pytest_c8y.assert_device import AssertDevice
 from pytest_c8y.compare import compare_dataclass
+
+
+log = logging.getLogger()
 
 
 class InventoryNotFound(AssertionError):
@@ -134,3 +138,36 @@ class AssertInventory(AssertDevice):
 
         assert sorted(expected_devices) == sorted(map(lambda x: x["name"], children))
         return children
+
+    def delete_device_and_user(
+        self,
+        mo: ManagedObject = None,
+        **kwargs,
+    ) -> None:
+        """Assert device user and all child devices. The device user is then deleted afterwards"""
+
+        try:
+            if mo is None:
+                mo = self.context.client.inventory.get(self.context.device_id)
+
+            log.info(
+                "Removing managed object and all child devices. id=%s",
+                mo.id,
+            )
+
+            self.context.client.delete(
+                f"/inventory/managedObjects/{mo.id}",
+                params={
+                    "cascade": True,
+                    "withDeviceUser": False,
+                },
+            )
+
+            log.info("Removing device user. name=%s", mo.owner)
+            tenant_id = self.context.client.tenant_id
+            self.context.client.delete(f"/user/{tenant_id}/users/{mo.owner}")
+        except KeyError as ex:
+            log.info("Device has already been removed. %s", ex)
+        except Exception as ex:
+            log.error("Could not delete device. %s", ex)
+            raise
