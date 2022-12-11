@@ -1,4 +1,5 @@
 """Operation assertions"""
+import json
 from typing import Any, Dict
 from c8y_api.model import Operation
 
@@ -18,7 +19,7 @@ class AssertOperation:
         configure_retry_on_members(self, "^assert_.+", **kwargs)
 
     def __repr__(self) -> str:
-        return self.to_json()
+        return json.dumps(self.to_json())
 
     def to_json(self) -> Dict[str, Any]:
         """Get operation as dictionary"""
