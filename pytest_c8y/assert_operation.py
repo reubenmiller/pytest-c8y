@@ -17,6 +17,9 @@ class AssertOperation:
         self.operation = operation
         configure_retry_on_members(self, "^assert_.+", **kwargs)
 
+    def __repr__(self) -> str:
+        return self.to_json()
+
     def to_json(self) -> Dict[str, Any]:
         """Get operation as dictionary"""
         return self.operation.to_json()
