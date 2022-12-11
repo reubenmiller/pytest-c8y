@@ -17,7 +17,11 @@ class Alarms(AssertDevice):
     # pylint: disable=too-few-public-methods
 
     def assert_count(
-        self, expected_text: str = None, min_matches: int = 1, max_matches: int = None, **kwargs
+        self,
+        expected_text: str = None,
+        min_matches: int = 1,
+        max_matches: int = None,
+        **kwargs,
     ) -> List[Alarm]:
         """
         Assert a count of matching alarms

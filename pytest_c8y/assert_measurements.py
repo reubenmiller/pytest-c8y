@@ -59,7 +59,7 @@ class AssertMeasurements(AssertDevice):
         """
         source = kwargs.pop("source", self.context.device_id) or None
         page_size = kwargs.pop("pageSize", 2000)
-        
+
         measurements = self.context.client.measurements.get_all(
             source=source,
             page_size=page_size,

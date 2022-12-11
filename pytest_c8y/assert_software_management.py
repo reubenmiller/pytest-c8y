@@ -77,7 +77,9 @@ class SoftwareManagement(AssertDevice):
         if mo is None:
             mo = self.context.client.inventory.get(self.context.device_id)
 
-        assert "c8y_SoftwareList" in mo, "Managed object does not have a c8y_SoftwareList fragment"
+        assert (
+            "c8y_SoftwareList" in mo
+        ), "Managed object does not have a c8y_SoftwareList fragment"
 
         installed = [item["name"] for item in mo["c8y_SoftwareList"]]
         errors = []
@@ -116,7 +118,9 @@ class SoftwareManagement(AssertDevice):
         if mo is None:
             mo = self.context.client.inventory.get(self.context.device_id)
 
-        assert "c8y_SoftwareList" in mo, "Managed object does not have a c8y_SoftwareList fragment"
+        assert (
+            "c8y_SoftwareList" in mo
+        ), "Managed object does not have a c8y_SoftwareList fragment"
 
         installed = [item["name"] for item in mo["c8y_SoftwareList"]]
         errors = []
