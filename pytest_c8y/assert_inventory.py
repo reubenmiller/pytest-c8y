@@ -139,6 +139,45 @@ class AssertInventory(AssertDevice):
         assert sorted(expected_devices) == sorted(map(lambda x: x["name"], children))
         return children
 
+    def assert_relationship(
+        self,
+        child_identity: str,
+        child_identity_type: str = "c8y_Serial",
+        child_type: str = "childDevices",
+        mo: ManagedObject = None,
+        **kwargs,
+    ) -> List[Dict[str, Any]]:
+        """Assert that a child identity is a child of a give managed object
+
+        Args:
+            child_identity (str): Child identity name
+            child_identity_type (str, optional): Child identity type. Defaults to 'c8y_Serial'
+            child_type (str, optional): Child relationship type, e.g. childDevices, childAssets, childAdditions.
+                Defaults to 'childDevices'
+            mo (ManagedObject, optional): Managed Object (parent) object. If set to None, then the
+                current context is used.
+        """
+
+        child_id = ""
+        try:
+            child_identity_obj = self.context.client.identity.get(
+                child_identity, child_identity_type
+            )
+            child_id = child_identity_obj.managed_object_id
+            assert child_id, "Child id should not be empty"
+        except KeyError as ex:
+            raise InventoryNotFound from ex
+
+        try:
+            mo_id = self.context.device_id
+            if mo is not None:
+                mo_id = mo.id
+            return self.context.client.get(
+                f"/inventory/managedObjects/{mo_id}/childDevices/{child_id}"
+            )
+        except KeyError as ex:
+            raise InventoryNotFound from ex
+
     def delete_device_and_user(
         self,
         mo: ManagedObject = None,
