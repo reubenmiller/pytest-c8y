@@ -10,10 +10,10 @@ from c8y_api._util import c8y_keys
 from c8y_api.model import Device, Operation
 from dotenv import load_dotenv
 
-from pytest_c8y.c8y import CustomCumulocityApp
-from pytest_c8y.device_management import DeviceManagement, create_context_from_identity
-from pytest_c8y.task import BackgroundTask
-from pytest_c8y.utils import RandomNameGenerator
+from c8y_test_core.c8y import CustomCumulocityApp
+from c8y_test_core.device_management import DeviceManagement, create_context_from_identity
+from c8y_test_core.task import BackgroundTask
+from c8y_test_core.utils import RandomNameGenerator
 
 LOGGER = logging.getLogger(__name__)
 
@@ -80,6 +80,12 @@ def factory(logger, live_c8y: CumulocityApi):
     for c in created:
         c.delete()
         logger.info(f"Removed object #{c.id}, ({c.__class__.__name__})")
+
+
+@pytest.fixture(scope="function")
+def random_name() -> str:
+    """Provide a random name."""
+    return RandomNameGenerator.random_name()
 
 
 # @pytest.fixture(scope='session')

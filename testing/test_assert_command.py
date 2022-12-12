@@ -1,6 +1,6 @@
 """Command assertion tests"""
 from c8y_api.model import Device
-from pytest_c8y.device_management import DeviceManagement
+from c8y_test_core.device_management import DeviceManagement
 
 
 def test_execute_command(sample_device: Device, device_mgmt: DeviceManagement):

@@ -1,7 +1,6 @@
 """Device availability/connectivity assertion tests"""
 from c8y_api.model import ManagedObject
-from pytest_c8y.device_management import DeviceManagement
-from pytest_c8y.models import Firmware
+from c8y_test_core.device_management import DeviceManagement
 import pytest
 
 

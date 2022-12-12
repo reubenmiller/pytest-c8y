@@ -1,6 +1,7 @@
 """Test firmware"""
 
-from pytest_c8y.models import Firmware
+import re
+from c8y_test_core.models import Firmware
 
 
 def test_firmware_comparison():
@@ -14,5 +15,5 @@ def test_firmware_comparison():
         version="1.0.2",
     )
     assert firmware != Firmware(name="linuxA", version="1.0.1", url="test")
-    assert firmware == Firmware(name="linuxA", version=".+")
-    assert firmware != Firmware(name="linuxA", version=".+", url=".+")
+    assert firmware == Firmware(name="linuxA", version=re.compile(".+"))
+    assert firmware != Firmware(name="linuxA", version=re.compile(".+"), url=re.compile(".+"))

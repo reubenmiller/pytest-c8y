@@ -1,7 +1,7 @@
 """Software management tests"""
 from c8y_api.model import ManagedObject
-from pytest_c8y.device_management import DeviceManagement
-from pytest_c8y.models import Software
+from c8y_test_core.device_management import DeviceManagement
+from c8y_test_core.models import Software
 import pytest
 
 

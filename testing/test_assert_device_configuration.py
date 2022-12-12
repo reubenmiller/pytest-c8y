@@ -1,8 +1,8 @@
 """Assert device configuration tests"""
 from c8y_api.model import Device
-from pytest_c8y.device_management import DeviceManagement
-from pytest_c8y.utils import RandomNameGenerator
-from pytest_c8y.models import Configuration
+from c8y_test_core.device_management import DeviceManagement
+from c8y_test_core.utils import RandomNameGenerator
+from c8y_test_core.models import Configuration
 
 
 def test_set_configuration(sample_device: Device, device_mgmt: DeviceManagement):
@@ -13,10 +13,10 @@ def test_set_configuration(sample_device: Device, device_mgmt: DeviceManagement)
 
     with device_mgmt.binaries.new_binary(
         name, binary_type="ci_cd", contents=contents
-    ) as binary:
+    ) as ref:
         url = (
             device_mgmt.context.client.base_url
-            + device_mgmt.context.client.binaries.build_object_path(binary.id)
+            + device_mgmt.context.client.binaries.build_object_path(ref.binary.id)
         )
         operation = device_mgmt.configuration.set_configuration(
             Configuration(type="CUSTOM", url=url)

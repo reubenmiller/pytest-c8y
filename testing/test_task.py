@@ -1,8 +1,8 @@
 """Task tests"""
 import time
 from c8y_api.model import Device, Operation, Event
-from pytest_c8y.device_management import DeviceManagement
-from pytest_c8y.task import BackgroundTask
+from c8y_test_core.device_management import DeviceManagement
+from c8y_test_core.task import BackgroundTask
 
 
 def test_background_task(

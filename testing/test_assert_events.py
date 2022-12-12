@@ -1,6 +1,6 @@
 """Event assertion tests"""
 from c8y_api.model import Device, Event
-from pytest_c8y.device_management import DeviceManagement
+from c8y_test_core.device_management import DeviceManagement
 import pytest
 
 

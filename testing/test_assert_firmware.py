@@ -1,7 +1,8 @@
 """Firmware assertion tests"""
+import re
 from c8y_api.model import ManagedObject
-from pytest_c8y.device_management import DeviceManagement
-from pytest_c8y.models import Firmware
+from c8y_test_core.device_management import DeviceManagement
+from c8y_test_core.models import Firmware
 import pytest
 
 
@@ -9,7 +10,7 @@ def test_assert_firmware(device_mgmt: DeviceManagement):
     """Test firmware assertions"""
     mo = ManagedObject(c8y_Firmware=Firmware(name="linux-A", version="1.0.0").__dict__)
     device_mgmt.firmware_management.assert_firmware(
-        Firmware(name="linux-.+", version=".+"),
+        Firmware(name=re.compile("linux-.+"), version=re.compile(".+")),
         mo=mo,
     )
 
@@ -19,7 +20,7 @@ def test_assert_firmware(device_mgmt: DeviceManagement):
     )
 
     device_mgmt.firmware_management.assert_firmware(
-        Firmware(name="linux-A", version="^1.+"),
+        Firmware(name="linux-A", version=re.compile("^1.+")),
         mo=mo,
     )
 

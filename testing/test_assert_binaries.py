@@ -1,6 +1,6 @@
 """Assert binaries tests"""
-from pytest_c8y.device_management import DeviceManagement
-from pytest_c8y.utils import RandomNameGenerator
+from c8y_test_core.device_management import DeviceManagement
+from c8y_test_core.utils import RandomNameGenerator
 
 
 def test_binary_context(device_mgmt: DeviceManagement):

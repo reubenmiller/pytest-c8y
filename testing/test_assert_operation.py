@@ -1,7 +1,6 @@
 """Assert operation tests"""
 from c8y_api.model import Device, Operation
-from tenacity import stop_after_delay
-from pytest_c8y.device_management import DeviceManagement
+from c8y_test_core.device_management import DeviceManagement
 
 
 def test_assert_operation_status(sample_device: Device, device_mgmt: DeviceManagement):
