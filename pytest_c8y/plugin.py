@@ -89,8 +89,8 @@ def factory(logger, live_c8y: CumulocityApi):
 def _generate_random_name(prefix: str = "") -> str:
     name = random_name()
     if prefix:
-        return name
-    return "-".join([prefix, name])
+        return "-".join([prefix, name])
+    return name
 
 
 @pytest.fixture(name="random_name", scope="function")
