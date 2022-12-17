@@ -3,6 +3,7 @@
 import logging
 import os
 import time
+from typing import Callable
 
 import pytest
 from c8y_api._main_api import CumulocityApi
@@ -11,9 +12,12 @@ from c8y_api.model import Device, Operation
 from dotenv import load_dotenv
 
 from c8y_test_core.c8y import CustomCumulocityApp
-from c8y_test_core.device_management import DeviceManagement, create_context_from_identity
+from c8y_test_core.device_management import (
+    DeviceManagement,
+    create_context_from_identity,
+)
 from c8y_test_core.task import BackgroundTask
-from c8y_test_core.utils import RandomNameGenerator
+from c8y_test_core.utils import RandomNameGenerator, random_name
 
 LOGGER = logging.getLogger(__name__)
 
@@ -82,10 +86,31 @@ def factory(logger, live_c8y: CumulocityApi):
         logger.info(f"Removed object #{c.id}, ({c.__class__.__name__})")
 
 
-@pytest.fixture(scope="function")
-def random_name() -> str:
+def _generate_random_name(prefix: str = "") -> str:
+    name = random_name()
+    if prefix:
+        return name
+    return "-".join([prefix, name])
+
+
+@pytest.fixture(name="random_name", scope="function")
+def random_name_fixture(variables: dict) -> str:
     """Provide a random name."""
-    return RandomNameGenerator.random_name()
+    return _generate_random_name(prefix=variables.get("PREFIX", "TST"))
+
+
+@pytest.fixture(name="random_name_factory")
+def fixture_random_name_factory(variables: dict) -> Callable[[], str]:
+    """Generate a random name
+
+    Returns:
+        Callable[[], str]: Random name factory
+    """
+
+    def generate():
+        return _generate_random_name(prefix=variables.get("PREFIX", "TST"))
+
+    return generate
 
 
 # @pytest.fixture(scope='session')
