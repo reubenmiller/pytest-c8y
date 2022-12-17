@@ -16,4 +16,6 @@ def test_firmware_comparison():
     )
     assert firmware != Firmware(name="linuxA", version="1.0.1", url="test")
     assert firmware == Firmware(name="linuxA", version=re.compile(".+"))
-    assert firmware != Firmware(name="linuxA", version=re.compile(".+"), url=re.compile(".+"))
+    assert firmware != Firmware(
+        name="linuxA", version=re.compile(".+"), url=re.compile(".+")
+    )
