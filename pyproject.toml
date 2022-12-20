@@ -4,7 +4,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "pytest-c8y"
-version = "0.1.6"
+version = "0.1.7"
 description = "pytest plugin for Cumulocity IoT"
 license = "MPL-2.0"
 authors = [
@@ -47,7 +47,7 @@ pytest-variables = "^2.0.0"
 requests = "^2.26.0"
 c8y-api = "^1.4"
 python-dotenv = "^0.20.0"
-c8y-test-core = {git = "https://github.com/reubenmiller/c8y-test-core.git", rev = "0.0.5"}
+c8y-test-core = {git = "https://github.com/reubenmiller/c8y-test-core.git", rev = "0.1.1"}
 
 [tool.poetry.dev-dependencies]
 black = "^22.1.0"
