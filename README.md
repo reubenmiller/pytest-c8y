@@ -1,7 +1,7 @@
 ## pytest-c8y
 
-pytest-c8y is a plugin for `pytest <http://pytest.org>`_ that provides
-support for running `Cumulocity IoT <https://www.softwareag.cloud/site/product/cumulocity-iot.html>`_ based tests.
+pytest-c8y is a plugin for [pytest](http://pytest.org) that provides
+support for running [Cumulocity IoT](https://www.softwareag.cloud/site/product/cumulocity-iot.html) based tests.
 
 ## Getting started
 
